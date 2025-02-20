@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ayush.expense_backend.dto.ExpenseDto;
@@ -24,13 +25,13 @@ import com.ayush.expense_backend.service.expense.ExpenseService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("${api.prefix}/expense")
+@RequestMapping("${api.prefix}/expenses")
 @RequiredArgsConstructor
 public class ExpenseController {
 
     private final ExpenseService expenseService;
 
-    @PostMapping("/{user_id}/create")
+    @PostMapping("/{user_id}")
     public ResponseEntity<ApiResponse> createExpense(@RequestBody ExpenseRequest request,
             @PathVariable("user_id") Long user_id) {
         try {
@@ -43,7 +44,7 @@ public class ExpenseController {
         }
     }
 
-    @PutMapping("/{expense_id}/update")
+    @PutMapping("/{expense_id}")
     public ResponseEntity<ApiResponse> updateExpense(@RequestBody ExpenseRequest request,
             @PathVariable("expense_id") Long expense_id) {
         try {
@@ -57,7 +58,7 @@ public class ExpenseController {
         }
     }
 
-    @DeleteMapping("/delete/{expense_id}")
+    @DeleteMapping("/{expense_id}")
     public ResponseEntity<ApiResponse> deleteExpense(@PathVariable("expense_id") Long expense_id) {
         try {
             expenseService.deleteExpense(expense_id);
@@ -69,8 +70,8 @@ public class ExpenseController {
         }
     }
 
-    @GetMapping("/{user_id}/category")
-    public ResponseEntity<ApiResponse> getExpenseByCategory(@PathVariable Long user_id, @PathVariable String category) {
+    @GetMapping("/category") // fetch through category
+    public ResponseEntity<ApiResponse> getExpenseByCategory(@RequestParam Long user_id, @RequestParam String category) {
         try {
             Expense expense = expenseService.getexpenseByCategory(category, user_id);
             ExpenseDto expenseDto = expenseService.convertToDto(expense);
@@ -81,8 +82,8 @@ public class ExpenseController {
         }
     }
 
-    @GetMapping("/{user_id}/all")
-    public ResponseEntity<ApiResponse> getAllExpenseByUserId(@PathVariable Long user_id) {
+    @GetMapping
+    public ResponseEntity<ApiResponse> getAllExpenseByUserId(@RequestParam Long user_id) {
         try {
             List<Expense> expenses = expenseService.getAllExpenseByUserId(user_id);
             List<ExpenseDto> expenseDtos = expenseService.getAllDtos(expenses);
@@ -90,6 +91,17 @@ public class ExpenseController {
                     HttpStatus.FOUND);
         } catch (NoDataFoundException e) {
             return new ResponseEntity<ApiResponse>(new ApiResponse(false, e.getMessage(), null), HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @GetMapping("/{expense_id}")
+    public ResponseEntity<ApiResponse> getExpenseByid(@PathVariable Long expense_id){
+        try {
+            Expense expense = expenseService.getExpenseById(expense_id);
+            ExpenseDto expenseDto = expenseService.convertToDto(expense);
+            return new ResponseEntity<ApiResponse>(new ApiResponse(true, "Fetched Successfully", expenseDto), HttpStatus.OK);
+        } catch (NoDataFoundException e) {
+            return new ResponseEntity<ApiResponse>(new ApiResponse(false, "Error : No Expense Found With id:" + expense_id +" ", null), HttpStatus.NOT_FOUND);
         }
     }
 

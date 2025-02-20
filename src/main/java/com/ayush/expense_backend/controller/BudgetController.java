@@ -27,11 +27,11 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("${api.prefix}/budget")
+@RequestMapping("${api.prefix}/budgets")
 public class BudgetController {
     private final BudgetService budgetService;
 
-    @PostMapping("/{user_id}/create")
+    @PostMapping("/{user_id}")
     public ResponseEntity<ApiResponse> createBudget(@RequestBody BudgetRequest request,
             @PathVariable("user_id") Long user_id) {
         try {
@@ -44,7 +44,7 @@ public class BudgetController {
         }
     }
 
-    @PutMapping("/{budget_id}/update")
+    @PutMapping("/{budget_id}")
     public ResponseEntity<ApiResponse> updateBudget(@RequestBody UpdateBudgetRequest request,
             @PathVariable("budget_id") Long budget_id) {
         try {
@@ -57,7 +57,7 @@ public class BudgetController {
         }
     }
 
-    @DeleteMapping("/{budget_id}/delete")
+    @DeleteMapping("/{budget_id}")
     public ResponseEntity<ApiResponse> deleteBudget(@PathVariable("budget_id") Long budget_id) {
         try {
             budgetService.deleteBudget(budget_id);
@@ -68,7 +68,7 @@ public class BudgetController {
         }
     }
 
-    @GetMapping("/{user_id}/all")
+    @GetMapping("/{user_id}")
     public ResponseEntity<ApiResponse> getAllBudgetByUserId(@PathVariable Long user_id) {
         try {
             Optional<Budget> budgets = budgetService.getallBudgetbyUserId(user_id);

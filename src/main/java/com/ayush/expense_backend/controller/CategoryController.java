@@ -19,12 +19,12 @@ import com.ayush.expense_backend.service.category.CategoryService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("${api.prefix}/category")
+@RequestMapping("${api.prefix}/categories")
 @RequiredArgsConstructor
 public class CategoryController {
     private final CategoryService categoryService;
 
-    @PostMapping("/{user_id}/add")
+    @PostMapping("/{user_id}")
     public ResponseEntity<ApiResponse> addCategory(@RequestBody CategoryRequest request,
             @PathVariable("user_id") Long user_id) {
         try {
@@ -38,7 +38,7 @@ public class CategoryController {
         }
     }
 
-    @PutMapping("/{user_id}/update")
+    @PutMapping("/{user_id}")
     public ResponseEntity<ApiResponse> updateCategory(@PathVariable("user_id") Long user_id , @RequestBody CategoryRequest request){
         try {
             Category category = categoryService.updateCategory(user_id, request);

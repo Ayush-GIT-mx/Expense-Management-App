@@ -36,7 +36,7 @@ public class UserController {
         }
     }
 
-    @PutMapping("/{user_id}/update")
+    @PutMapping("/{user_id}")
     public ResponseEntity<ApiResponse> updateUser(@RequestBody UpdateUserRequest request,
             @PathVariable("user_id") Long user_id) {
         try {
