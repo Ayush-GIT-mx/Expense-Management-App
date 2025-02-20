@@ -1,4 +1,4 @@
-package com.ayush.expense_backend.config;
+package com.ayush.expense_backend.modelmapper;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;

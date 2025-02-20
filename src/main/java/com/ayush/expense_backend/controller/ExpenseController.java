@@ -70,7 +70,7 @@ public class ExpenseController {
         }
     }
 
-    @GetMapping("/category") // fetch through category
+    @GetMapping("/category/{user_id}") // fetch through category
     public ResponseEntity<ApiResponse> getExpenseByCategory(@RequestParam Long user_id, @RequestParam String category) {
         try {
             Expense expense = expenseService.getexpenseByCategory(category, user_id);
