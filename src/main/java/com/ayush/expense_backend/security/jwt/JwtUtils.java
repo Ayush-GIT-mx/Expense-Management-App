@@ -1,88 +1,58 @@
 package com.ayush.expense_backend.security.jwt;
 
-import java.sql.Date;
-import java.util.HashMap;
+import java.security.Key;
+import java.util.Date;
 import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
+import java.util.stream.Collectors;
 
-import javax.crypto.SecretKey;
-
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import com.ayush.expense_backend.security.user.AppUserDetails;
 
-import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 
 @Component
 public class JwtUtils {
-    @Value("${auth.token.jwtSecret}")
-    private String jwtSecret;
-    @Value("${auth.token.jwtExpirationMs}")
-    private int jwtExpirationMs;
 
-    public String generateToken(Authentication authentication) {
+    private String jwtSecret = "NihplkkITHHNWm4Lx3D2ZPv/P8etpd+r6ASNWeC50Uw=";
+    private int JwtExprationinMs = 3600000;
 
-        AppUserDetails userPrincipal = (AppUserDetails) authentication.getPrincipal();
-
-        List<String> roles = userPrincipal.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList();
-        Map<String, Object> claims = new HashMap<>();
-        claims.put("roles", roles);
+    public String generateTokenForUser(Authentication authentication) {
+        AppUserDetails userPrincpal = (AppUserDetails) authentication.getPrincipal();
+        List<String> roles = userPrincpal.getAuthorities().stream().map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toList());
 
         return Jwts.builder()
-                .claims()
-                .add(claims)
-                .subject(userPrincipal.getEmail())
-                .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + jwtExpirationMs))
-                .and()
-                .signWith(Key())
-                .compact();
-
+                .setSubject(userPrincpal.getEmail())
+                .claim("id", userPrincpal.getId())
+                .claim("roles", roles)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(new Date().getTime() + JwtExprationinMs))
+                .signWith(key(), SignatureAlgorithm.HS256).compact();
     }
 
-    private SecretKey Key() {
-        try {
-            return Keys.hmacShaKeyFor(jwtSecret.getBytes());
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+    private Key key() {
+        return Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecret));
     }
 
-    public String extractUserName(String token) {
-        // extract the username from jwt token
-        return extractClaim(token, Claims::getSubject);
-    }
+    public String getUsernameFromToken(String token) {
+        return Jwts.parserBuilder().setSigningKey(key()).build().parseClaimsJws(token).getBody().getSubject();
 
-    private <T> T extractClaim(String token, Function<Claims, T> claimResolver) {
-        final Claims claims = extractAllClaims(token);
-        return claimResolver.apply(claims);
-    }
-
-    private Claims extractAllClaims(String token) {
-        return Jwts.parser()
-                .verifyWith(Key())
-                .build()
-                .parseSignedClaims(token)
-                .getPayload();
     }
 
     public boolean validateToken(String token) {
         try {
-            Jwts.parser()
-                    .verifyWith(Key())
-                    .build()
-                    .parseSignedClaims(token)
-                    .getPayload();
+            Jwts.parserBuilder().setSigningKey(key()).build().parseClaimsJws(token);
             return true;
         } catch (JwtException e) {
             return false;
         }
     }
+
 }

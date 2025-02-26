@@ -2,10 +2,12 @@ package com.ayush.expense_backend.filter;
 
 import java.io.IOException;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.ayush.expense_backend.security.jwt.JwtUtils;
@@ -18,7 +20,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 public class AuthTokenFilter extends OncePerRequestFilter {
+    @Autowired
     private JwtUtils jwtUtils;
+    @Autowired
     private AppUserDetailsService UserDetailsService;
 
     @Override
@@ -29,8 +33,8 @@ public class AuthTokenFilter extends OncePerRequestFilter {
         try {
             String jwt = ParseJwt(request);
 
-            if (jwt != null && jwtUtils.validateToken(jwt)) {
-                String username = jwtUtils.extractUserName(jwt);
+            if (StringUtils.hasText(jwt) && jwtUtils.validateToken(jwt)) {
+                String username = jwtUtils.getUsernameFromToken(jwt);
                 UserDetails userDetails = UserDetailsService.loadUserByUsername(username);
                 var auth = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 SecurityContextHolder.getContext().setAuthentication(auth);
@@ -49,8 +53,8 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 
     private String ParseJwt(HttpServletRequest request) {
         String headerAuth = request.getHeader("Authorization");
-        if (headerAuth != null && headerAuth.startsWith("Bearer ")) {
-            return headerAuth.substring(7, headerAuth.length());
+        if (StringUtils.hasText(headerAuth) && headerAuth.startsWith("Bearer ")) {
+            return headerAuth.substring(7);
         }
         return null;
     }
