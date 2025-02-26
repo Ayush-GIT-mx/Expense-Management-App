@@ -1,6 +1,8 @@
 package com.ayush.expense_backend.controller;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -25,7 +27,7 @@ public class UserController {
 
     private final UserService userService;
 
-    @PostMapping("/add")
+    @PostMapping()
     public ResponseEntity<ApiResponse> createuser(@RequestBody AddNewUserRequest request) {
         try {
             User user = userService.registerUser(request);
@@ -47,6 +49,18 @@ public class UserController {
             return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage(), null));
         }
 
+    }
+
+    @GetMapping("/{user_id}")
+    public ResponseEntity<ApiResponse> getUserById(@PathVariable Long user_id) {
+        try {
+            User user = userService.getUserById(user_id);
+            UserDto userDto = userService.convertToUserDto(user);
+            return new ResponseEntity<ApiResponse>(new ApiResponse(true, "Fetched Succesfully", userDto),
+                    HttpStatus.OK);
+        } catch (NoDataFoundException e) {
+            return new ResponseEntity<ApiResponse>(new ApiResponse(false, e.getMessage(), null), HttpStatus.NOT_FOUND);
+        }
     }
 
 }

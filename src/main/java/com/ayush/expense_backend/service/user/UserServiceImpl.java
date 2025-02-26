@@ -1,9 +1,13 @@
 package com.ayush.expense_backend.service.user;
 
+import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.boot.autoconfigure.couchbase.CouchbaseProperties.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.ayush.expense_backend.dto.UserDto;
@@ -20,6 +24,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
+    private final PasswordEncoder PasswordEncoder;
     private final ModelMapper modelMapper;
     private final UserRepository userRepository;
 
@@ -35,7 +40,8 @@ public class UserServiceImpl implements UserService {
                 .map(req -> {
                     User user = new User();
                     user.setUsername(req.getUsername());
-                    user.setPassword(req.getPassword());
+                    user.setPassword(PasswordEncoder.encode(request.getPassword()));
+                    user.setRoles(request.getRoles());
                     user.setEmail(req.getEmail());
                     user.setCreatedAt(LocalDateTime.now());
                     user.setUpdatedAt(LocalDateTime.now());
@@ -57,17 +63,24 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void deleteUser(Long user_id) {
-        userRepository.findById(user_id).ifPresentOrElse(userRepository :: delete, () ->{
+        userRepository.findById(user_id).ifPresentOrElse(userRepository::delete, () -> {
             throw new NoDataFoundException("User with id :" + user_id + " not found!");
         });
     }
-        
 
     @Override
     public User getUserById(Long user_id) {
-       return userRepository.findById(user_id).orElseThrow( () ->{
-        throw new NoDataFoundException("User with id :" + user_id + " not found!");
-       });
+        return userRepository.findById(user_id).orElseThrow(() -> {
+            throw new NoDataFoundException("User with id :" + user_id + " not found!");
+        });
+    }
+
+    @Override
+    public User getAuthenticatedUser() {
+        Authentication authentication = (Authentication) SecurityContextHolder.getContext().getAuthentication();
+        String email = ((Principal) authentication).getName();
+        return userRepository.findByEmail(email);
+
     }
 
 }

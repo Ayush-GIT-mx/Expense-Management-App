@@ -21,4 +21,6 @@ public interface UserService {
     // Get User By Id
     User getUserById(Long user_id);
 
+    User getAuthenticatedUser();
+
 }
