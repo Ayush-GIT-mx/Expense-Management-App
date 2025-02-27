@@ -5,6 +5,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
@@ -19,9 +21,12 @@ import io.jsonwebtoken.security.Keys;
 
 @Component
 public class JwtUtils {
-
-    private String jwtSecret = "NihplkkITHHNWm4Lx3D2ZPv/P8etpd+r6ASNWeC50Uw=";
-    private int JwtExprationinMs = 3600000;
+    @Value("${auth.token.jwtSecret}")
+    @Autowired
+    private String jwtSecret;
+    @Value("${auth.token.JwtExpiration}")
+    @Autowired
+    private int JwtExprationinMs;
 
     public String generateTokenForUser(Authentication authentication) {
         AppUserDetails userPrincpal = (AppUserDetails) authentication.getPrincipal();
