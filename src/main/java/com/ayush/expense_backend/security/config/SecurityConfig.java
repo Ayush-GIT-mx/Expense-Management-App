@@ -31,7 +31,7 @@ public class SecurityConfig {
     private final AppUserDetailsService userDetailsService;
     private final JwtAuthEntryPoint authEntryPoint;
 
-    private static final List<String> SECURED_URLS = List.of("/api/v1/expenses/**" , "/api/v1/budgets/**");
+    private static final List<String> SECURED_URLS = List.of("/api/v1/expenses/**");
 
     @Bean
     public PasswordEncoder passwordEncoder() {

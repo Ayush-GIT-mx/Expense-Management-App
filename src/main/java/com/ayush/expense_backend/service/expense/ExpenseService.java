@@ -9,7 +9,7 @@ import com.ayush.expense_backend.request.ExpenseRequest;
 public interface ExpenseService {
     ExpenseDto convertToDto(Expense expense);
 
-    Expense createExpense(ExpenseRequest request, Long user_id);
+    Expense createExpense(ExpenseRequest request, Long user_id , Long budget_id);
 
     Expense updatExpense(ExpenseRequest request, Long expense_id);
 

@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ExpenseDto {
     private Long id;
+    private Long budgetId;
     private BigDecimal amount;
     private String category;
     private String description;

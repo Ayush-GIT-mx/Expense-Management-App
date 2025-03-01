@@ -33,9 +33,9 @@ public class ExpenseController {
 
     @PostMapping("/{user_id}")
     public ResponseEntity<ApiResponse> createExpense(@RequestBody ExpenseRequest request,
-            @PathVariable("user_id") Long user_id) {
+            @PathVariable("user_id") Long user_id, @RequestParam Long budget_id) {
         try {
-            Expense expense = expenseService.createExpense(request, user_id);
+            Expense expense = expenseService.createExpense(request, user_id, budget_id);
             ExpenseDto expenseDto = expenseService.convertToDto(expense);
             return new ResponseEntity<ApiResponse>(new ApiResponse(true, "Sucess", expenseDto), HttpStatus.CREATED);
         } catch (NoDataFoundException e) {
@@ -95,13 +95,16 @@ public class ExpenseController {
     }
 
     @GetMapping("/{expense_id}")
-    public ResponseEntity<ApiResponse> getExpenseByid(@PathVariable Long expense_id){
+    public ResponseEntity<ApiResponse> getExpenseByid(@PathVariable Long expense_id) {
         try {
             Expense expense = expenseService.getExpenseById(expense_id);
             ExpenseDto expenseDto = expenseService.convertToDto(expense);
-            return new ResponseEntity<ApiResponse>(new ApiResponse(true, "Fetched Successfully", expenseDto), HttpStatus.OK);
+            return new ResponseEntity<ApiResponse>(new ApiResponse(true, "Fetched Successfully", expenseDto),
+                    HttpStatus.OK);
         } catch (NoDataFoundException e) {
-            return new ResponseEntity<ApiResponse>(new ApiResponse(false, "Error : No Expense Found With id:" + expense_id +" ", null), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<ApiResponse>(
+                    new ApiResponse(false, "Error : No Expense Found With id:" + expense_id + " ", null),
+                    HttpStatus.NOT_FOUND);
         }
     }
 

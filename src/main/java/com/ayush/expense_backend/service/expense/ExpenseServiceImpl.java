@@ -9,9 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ayush.expense_backend.dto.ExpenseDto;
+import com.ayush.expense_backend.entity.Budget;
 import com.ayush.expense_backend.entity.Expense;
 import com.ayush.expense_backend.entity.User;
 import com.ayush.expense_backend.exception.NoDataFoundException;
+import com.ayush.expense_backend.repository.BudgetRepository;
 import com.ayush.expense_backend.repository.ExpenseRepository;
 import com.ayush.expense_backend.repository.UserRepository;
 import com.ayush.expense_backend.request.ExpenseRequest;
@@ -24,6 +26,8 @@ public class ExpenseServiceImpl implements ExpenseService {
     private ExpenseRepository expenseRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private BudgetRepository budgetRepository;
 
     @Override
     public ExpenseDto convertToDto(Expense expense) {
@@ -31,7 +35,7 @@ public class ExpenseServiceImpl implements ExpenseService {
     }
 
     @Override
-    public Expense createExpense(ExpenseRequest request, Long user_id) {
+    public Expense createExpense(ExpenseRequest request, Long user_id, Long budget_id) {
         Expense expense = new Expense();
         expense.setAmount(request.getAmount());
         expense.setCategory(request.getCategory());
@@ -41,8 +45,11 @@ public class ExpenseServiceImpl implements ExpenseService {
         User user = userRepository.findById(user_id).orElseThrow(() -> {
             throw new NoDataFoundException("User with id :" + user_id + " not found!");
         });
+        Budget budget = budgetRepository.findById(budget_id).orElseThrow(() -> {
+            throw new NoDataFoundException("Budget with id :" + budget_id + " not found!");
+        });
         expense.setUser(user);
-
+        expense.setBudget(budget);
         return expenseRepository.save(expense);
     }
 
@@ -79,19 +86,18 @@ public class ExpenseServiceImpl implements ExpenseService {
     }
 
     @Override
-    public List <Expense> getAllExpenseByUserId(Long user_id) {
+    public List<Expense> getAllExpenseByUserId(Long user_id) {
         Optional<User> user = userRepository.findById(user_id);
         if (user.isEmpty()) {
             throw new NoDataFoundException("User Not Found with id:" + user_id + " ");
         }
-        List <Expense> allExpense = expenseRepository.findAllByUserId(user_id);
+        List<Expense> allExpense = expenseRepository.findAllByUserId(user_id);
         return allExpense;
     }
 
-
     @Override
     public List<ExpenseDto> getAllDtos(List<Expense> expenses) {
-       return expenses.stream().map(this::convertToDto).toList();
+        return expenses.stream().map(this::convertToDto).toList();
     }
 
 }
