@@ -48,6 +48,8 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Budget> budgets;
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinTable(name = "user_roles" , joinColumns = @JoinColumn(name ="user_id" , referencedColumnName = "id") , inverseJoinColumns = @JoinColumn(name ="roles_id"  , referencedColumnName = "id"))
+    @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "roles_id", referencedColumnName = "id"))
     private Collection<Role> roles;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Report> report;
 }

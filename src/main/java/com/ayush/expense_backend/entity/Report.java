@@ -1,11 +1,9 @@
 package com.ayush.expense_backend.entity;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -17,32 +15,23 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Data
 @Entity
+@Table(name = "report")
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "expense")
-public class Expense {
+public class Report {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(nullable = false)
-    private BigDecimal amount;
-    @Column(nullable = false)
-    private String category;
-    @Column(nullable = false)
-    private String description;
-    @Column(nullable = false)
-    private LocalDateTime date;
+    private LocalDateTime createdAt;
+    private BigDecimal TotalExpense;
+    private LocalDate startDate;
+    private LocalDate endDate;
 
-    // Relationships
+    // Relations to user
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
-
-    @ManyToOne
-    @JoinColumn(name = "budget_id", nullable = false)
-    @JsonIgnore
-    private Budget budget;
 
 }
