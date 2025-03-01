@@ -19,5 +19,6 @@ public class ReportDto {
     private String categoryWiseExpenses;
     private String dailyExpenses;
     private List<ExpenseDto> expenses;
+    private BudgetDto budget;
 
 }

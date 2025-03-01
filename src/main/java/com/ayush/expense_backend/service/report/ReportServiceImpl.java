@@ -3,13 +3,13 @@ package com.ayush.expense_backend.service.report;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import com.ayush.expense_backend.dto.BudgetDto;
 import com.ayush.expense_backend.dto.ExpenseDto;
 import com.ayush.expense_backend.dto.ReportDto;
 import com.ayush.expense_backend.entity.Budget;
@@ -21,6 +21,7 @@ import com.ayush.expense_backend.repository.BudgetRepository;
 import com.ayush.expense_backend.repository.ExpenseRepository;
 import com.ayush.expense_backend.repository.ReportRepository;
 import com.ayush.expense_backend.repository.UserRepository;
+import com.ayush.expense_backend.service.budget.BudgetService;
 import com.ayush.expense_backend.service.expense.ExpenseService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -35,6 +36,7 @@ public class ReportServiceImpl implements ReportService {
         private final ExpenseRepository expenseRepository;
         private final BudgetRepository budgetRepository;
         private final ExpenseService expenseService;
+        private final BudgetService budgetService;
 
         private final ObjectMapper objectMapper;
 
@@ -44,6 +46,7 @@ public class ReportServiceImpl implements ReportService {
                                 .orElseThrow(() -> new NoDataFoundException("User Not Found with id:" + user_id));
                 Budget budget = budgetRepository.findById(budget_id)
                                 .orElseThrow(() -> new NoDataFoundException("Budget Not Found with id:" + budget_id));
+                BudgetDto budgetDto = budgetService.convertTDto(budget);
 
                 List<Expense> expenses = expenseRepository.findByBudgetId(budget_id);
                 List<ExpenseDto> expenseDtos = expenseService.getAllDtos(expenses);
@@ -85,6 +88,7 @@ public class ReportServiceImpl implements ReportService {
                 reportDto.setCategoryWiseExpenses(categoryWiseExpenses);
                 reportDto.setDailyExpenses(dailyExpenses);
                 reportDto.setExpenses(expenseDtos);
+                reportDto.setBudget(budgetDto);
                 return reportDto;
         }
 
