@@ -19,7 +19,7 @@ The **Expense App Backend** is a RESTful API built with **Spring Boot** for mana
 - **JPA (Hibernate)**
 - **PostgreSQL / MySQL**
 - **Swagger (API Documentation)**
-- **Docker (Optional for Deployment)**
+
 
 ---
 
