@@ -2,12 +2,8 @@ package com.ayush.expense_backend.entity;
 
 import java.time.LocalDateTime;
 
-import com.ayush.expense_backend.enums.NotificationTypes;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -30,12 +26,11 @@ public class Notification {
     @Column(nullable = false, length = 500)
     private String message;
     @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    private NotificationTypes type;
+    private String NotificationType;
     @Column(nullable = false)
     private LocalDateTime timeStamp;
     @Column(nullable = false)
-    private boolean seen = false;
+    private boolean seen;
 
     // Relationships
     @ManyToOne
