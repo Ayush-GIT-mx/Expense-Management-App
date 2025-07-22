@@ -28,6 +28,7 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("${api.prefix}/budgets")
+
 public class BudgetController {
     private final BudgetService budgetService;
 

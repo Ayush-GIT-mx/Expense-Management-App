@@ -20,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("${api.prefix}/reports")
 @RequiredArgsConstructor
+
 public class ReportController {
     private final ReportService reportService;
 
