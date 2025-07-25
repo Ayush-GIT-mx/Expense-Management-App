@@ -100,4 +100,10 @@ public class ExpenseServiceImpl implements ExpenseService {
         return expenses.stream().map(this::convertToDto).toList();
     }
 
+    @Override
+    public List<Expense> getAllExpenseByBudgetId(Long budgetId) {
+        List<Expense> allExpense = expenseRepository.findByBudgetId(budgetId);
+        return allExpense;
+    }
+
 }

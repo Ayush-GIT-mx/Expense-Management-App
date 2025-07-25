@@ -77,7 +77,7 @@ public class ExpenseController {
             Expense expense = expenseService.getexpenseByCategory(category, user_id);
             ExpenseDto expenseDto = expenseService.convertToDto(expense);
             return new ResponseEntity<ApiResponse>(new ApiResponse(true, "Fetched Successfully", expenseDto),
-                    HttpStatus.FOUND);
+                    HttpStatus.OK);
         } catch (NoDataFoundException e) {
             return new ResponseEntity<ApiResponse>(new ApiResponse(false, e.getMessage(), null), HttpStatus.NOT_FOUND);
         }
@@ -89,7 +89,7 @@ public class ExpenseController {
             List<Expense> expenses = expenseService.getAllExpenseByUserId(user_id);
             List<ExpenseDto> expenseDtos = expenseService.getAllDtos(expenses);
             return new ResponseEntity<ApiResponse>(new ApiResponse(true, "Fetched Successfully", expenseDtos),
-                    HttpStatus.FOUND);
+                    HttpStatus.OK);
         } catch (NoDataFoundException e) {
             return new ResponseEntity<ApiResponse>(new ApiResponse(false, e.getMessage(), null), HttpStatus.NOT_FOUND);
         }
@@ -106,6 +106,19 @@ public class ExpenseController {
             return new ResponseEntity<ApiResponse>(
                     new ApiResponse(false, "Error : No Expense Found With id:" + expense_id + " ", null),
                     HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @GetMapping("/budget/{BudgetId}")
+    public ResponseEntity<ApiResponse> getAllExpenseByBudgetId(
+            @PathVariable Long BudgetId) {
+        try {
+            List<Expense> expenses = expenseService.getAllExpenseByBudgetId(BudgetId);
+            List<ExpenseDto> expenseDtos = expenseService.getAllDtos(expenses);
+            return new ResponseEntity<ApiResponse>(new ApiResponse(true, "Fetched Successfully", expenseDtos),
+                    HttpStatus.OK);
+        } catch (NoDataFoundException e) {
+            return new ResponseEntity<ApiResponse>(new ApiResponse(false, e.getMessage(), null), HttpStatus.NOT_FOUND);
         }
     }
 
