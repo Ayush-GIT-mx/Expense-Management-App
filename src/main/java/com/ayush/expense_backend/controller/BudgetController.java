@@ -72,7 +72,7 @@ public class BudgetController {
     @GetMapping("/{user_id}")
     public ResponseEntity<ApiResponse> getAllBudgetByUserId(@PathVariable Long user_id) {
         try {
-            Optional<Budget> budgets = budgetService.getallBudgetbyUserId(user_id);
+            List<Budget> budgets = budgetService.getallBudgetbyUserId(user_id);
             List<BudgetDto> budgetDtos = budgetService.getallDtos(budgets);
             return new ResponseEntity<ApiResponse>(new ApiResponse(true, "Budgets Fetched", budgetDtos), HttpStatus.OK);
         } catch (NoDataFoundException e) {

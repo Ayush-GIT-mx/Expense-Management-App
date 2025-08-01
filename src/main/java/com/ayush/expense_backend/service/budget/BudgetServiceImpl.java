@@ -65,7 +65,7 @@ public class BudgetServiceImpl implements BudgetService {
     }
 
     @Override
-    public Optional<Budget> getallBudgetbyUserId(Long user_id) {
+    public List<Budget> getallBudgetbyUserId(Long user_id) {
         Optional<User> user = userRepository.findById(user_id);
         if (user.isEmpty()) {
             throw new NoDataFoundException("User Not Found with id:" + user_id + " ");
@@ -74,7 +74,7 @@ public class BudgetServiceImpl implements BudgetService {
     }
 
     @Override
-    public List<BudgetDto> getallDtos(Optional<Budget> budgets) {
+    public List<BudgetDto> getallDtos(List<Budget> budgets) {
         return budgets.stream().map(this::convertTDto).toList();
     }
 
